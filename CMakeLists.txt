@@ -34,7 +34,7 @@ FetchContent_MakeAvailable(SDL glfw)
 
 # Add precompiled header
 add_library(pch STATIC
-    src/pch.cpp
+    inc/pch.cpp
     inc/pch.h
 )
 target_precompile_headers(pch PUBLIC
@@ -44,33 +44,16 @@ target_precompile_headers(pch PUBLIC
 add_library(glad STATIC extern/glad/src/glad.c)
 target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/extern/glad/include)
 
-# Include all source and header files
-file(GLOB_RECURSE SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
-)
-file(GLOB_RECURSE HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/*.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/inc/*.h"
-)
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-
-# Add include directories
-target_include_directories(${PROJECT_NAME} PRIVATE
+# Include directories
+include_directories(
     ${CMAKE_SOURCE_DIR}/inc
     ${OPENGL_INCLUDE_DIR}
     ${glfw_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/extern/glad/include
 )
 
-# Link OpenGL libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    SDL3::SDL3
-    glad
-    glfw
-    ${OPENGL_LIBRARIES}
-    pch
-)
-add_subdirectory(src/getting_started)
+# Add subdirectories for each chapter or section
+add_subdirectory(projects/getting_started)
 
+# Link pch with glfw and glad
 target_link_libraries(pch PUBLIC glfw glad)
