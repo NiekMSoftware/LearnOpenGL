@@ -53,7 +53,9 @@ include_directories(
 )
 
 # Add subdirectories for each chapter or section
-add_subdirectory(projects/getting_started)
+add_subdirectory(projects/part_I/hello_window)
+add_subdirectory(projects/part_I/hello_triangle)
+add_subdirectory(projects/part_I/shaders)
 
 # Link pch with glfw and glad
 target_link_libraries(pch PUBLIC glfw glad)
