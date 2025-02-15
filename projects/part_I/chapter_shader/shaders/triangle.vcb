@@ -1,12 +1,13 @@
 #version 460 core
 
-// TODO | Exercise 1; Adjust the vertex shader so that the triangle is upside down
+// Exercise 2: Apply a horizontal offset to move the triangle to the right.
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
 out vec3 coolColor;
+uniform float offset;
 
 void main() {
-    gl_Position = vec4(aPos.x, -aPos.y, aPos.z, 1.0);
+    gl_Position = vec4(aPos.x + offset, -aPos.y, aPos.z, 1.0);
     coolColor = aColor;
 }

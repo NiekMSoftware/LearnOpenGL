@@ -100,6 +100,11 @@ int main() {
 		
 		// activate the shader
 		shader.use();
+
+		float timeValue = glfwGetTime();
+		float offset = sin(timeValue) * 0.5f;
+		shader.setFloat("offset", offset);
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
