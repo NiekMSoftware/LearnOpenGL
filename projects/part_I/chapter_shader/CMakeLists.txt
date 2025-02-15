@@ -20,3 +20,9 @@ target_include_directories(${executable_name} PRIVATE
 
 # Add precompiled headers
 target_precompile_headers(${executable_name} REUSE_FROM pch)
+
+add_custom_command(TARGET ${executable_name} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+    ${CMAKE_CURRENT_BINARY_DIR}/shaders
+)

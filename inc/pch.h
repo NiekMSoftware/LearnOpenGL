@@ -15,6 +15,8 @@
 #include <memory>
 
 // io
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <format>
 #include <print>
@@ -22,3 +24,6 @@
 // timer
 #include <chrono>
 #include <thread>
+
+// custom GL 
+#include "shader.h"

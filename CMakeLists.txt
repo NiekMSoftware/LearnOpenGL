@@ -34,8 +34,9 @@ FetchContent_MakeAvailable(SDL glfw)
 
 # Add precompiled header
 add_library(pch STATIC
-    inc/pch.cpp
+    src/pch.cpp
     inc/pch.h
+    src/shader.cpp
 )
 target_precompile_headers(pch PUBLIC
     inc/pch.h
@@ -55,7 +56,7 @@ include_directories(
 # Add subdirectories for each chapter or section
 add_subdirectory(projects/part_I/hello_window)
 add_subdirectory(projects/part_I/hello_triangle)
-add_subdirectory(projects/part_I/shaders)
+add_subdirectory(projects/part_I/chapter_shader)
 
 # Link pch with glfw and glad
 target_link_libraries(pch PUBLIC glfw glad)

@@ -18,30 +18,6 @@ static void processInput(GLFWwindow* window) {
 	}
 }
 
-// compilation
-int success;
-char infolog[512];
-
-const char* vertexShaderSource{
-"#version 460 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 aColor;\n"
-"out vec3 ourColor;\n"
-"void main() {\n"
-"   gl_Position = vec4(aPos, 1.0);\n"
-"   ourColor = aColor;\n"
-"}\0"
-};
-
-const char* fragmentShaderSource{
-"#version 460 core\n"
-"out vec4 FragColor;\n"
-"in vec3 ourColor;\n"
-"void main() {\n"
-"   FragColor = vec4(ourColor, 1.0);\n"
-"}\0"
-};
-
 // triangle
 float vertices[]{
 	// positions       // colors
@@ -102,47 +78,17 @@ int main() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	// vert shader
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infolog);
-		std::cerr << "ERROR::COMPILATION::SHADER::VERTEX::FAILED\n" << infolog << "\n";
-	}
-
-	// frag shader
-	unsigned int fragShader;
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragShader);
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragShader, 512, NULL, infolog);
-		std::cerr << "ERROR::COMPILATION::SHADER::FRAGMENT::FAILED\n" << infolog << "\n";
-	}
-
-	// shader program
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragShader);
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
-		std::cerr << "ERROR::LINKING::SHADER::PROGRAM::FAILED\n" << infolog << "\n";
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragShader);
+	Shader shader{ 
+		"shaders/triangle.vertexShader",
+		"shaders/triangle.fragmentShader" 
+	};
 
 	// print msg
+	std::println("===================================================");
 	std::println("To switch between polygon modes press either:");
 	std::println("Numpad 0: Wireframe Mode.");
 	std::println("Numpad 1: Fill Mode.");
+	std::println("===================================================");
 
 	// Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -154,16 +100,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		// activate the shader
-		glUseProgram(shaderProgram);
-
-		// update the uniform color
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
-		// now render the triangle
+		shader.use();
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
