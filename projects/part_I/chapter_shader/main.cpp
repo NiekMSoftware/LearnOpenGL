@@ -17,8 +17,7 @@ static void processInput(GLFWwindow* window) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
-
-// triangle
+ 
 float vertices[]{
 	// positions       // colors
 	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom right
@@ -79,8 +78,8 @@ int main() {
 	glEnableVertexAttribArray(1);
 
 	Shader shader{ 
-		"shaders/triangle.vertexShader",
-		"shaders/triangle.fragmentShader" 
+		"shaders/triangle.vcb",
+		"shaders/triangle.fcb" 
 	};
 
 	// print msg
