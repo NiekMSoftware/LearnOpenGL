@@ -4,6 +4,20 @@ static void framebufferSizeCallback(GLFWwindow* window, const int width, const i
 	glViewport(0, 0, 800, 600);
 }
 
+static void processInput(GLFWwindow* window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
+
+	// Toggle between wireframe and filled mode
+	if (glfwGetKey(window, GLFW_KEY_KP_0) == GLFW_PRESS) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else if(glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+}
+
 // compilation
 int success;
 char infolog[512];
@@ -11,16 +25,19 @@ char infolog[512];
 const char* vertexShaderSource{
 "#version 460 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;\n"
 "void main() {\n"
-" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+" gl_Position = vec4(aPos, 1.0);\n"
+" vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 "}\0"
 };
 
 const char* fragmentShaderSource{
 "#version 460 core\n"
 "out vec4 FragColor;\n"
+"uniform vec4 ourColor;\n"
 "void main() {"
-" FragColor = vec4(0.6, 0.4, 0.7, 1.0);\n"
+" FragColor = ourColor;\n"
 "}\0"
 };
 
@@ -114,13 +131,31 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
 
+	// print msg
+	std::println("To switch between polygon modes press either:");
+	std::println("Numpad 0: Wireframe Mode.");
+	std::println("Numoad 1: Fill Mode.");
+
 	// Render loop
 	while (!glfwWindowShouldClose(window)) {
-		// clear color
+		// input
+		processInput(window);
+
+		// render and clear the color buffer
 		glClearColor(0.4, 0.6, 0.4, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
-
+		
+		// activate the shader
 		glUseProgram(shaderProgram);
+
+		// update the uniform color
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+		// now render the triangle
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
