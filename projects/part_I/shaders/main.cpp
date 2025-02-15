@@ -25,27 +25,29 @@ char infolog[512];
 const char* vertexShaderSource{
 "#version 460 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"out vec4 vertexColor;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 ourColor;\n"
 "void main() {\n"
-" gl_Position = vec4(aPos, 1.0);\n"
-" vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
+"   gl_Position = vec4(aPos, 1.0);\n"
+"   ourColor = aColor;\n"
 "}\0"
 };
 
 const char* fragmentShaderSource{
 "#version 460 core\n"
 "out vec4 FragColor;\n"
-"uniform vec4 ourColor;\n"
-"void main() {"
-" FragColor = ourColor;\n"
+"in vec3 ourColor;\n"
+"void main() {\n"
+"   FragColor = vec4(ourColor, 1.0);\n"
 "}\0"
 };
 
 // triangle
 float vertices[]{
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f, 0.5f, 0.0f
+	// positions       // colors
+	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom right
+   -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // bottom left
+	0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // top
 };
 
 int main() {
@@ -91,8 +93,14 @@ int main() {
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	// color attributes
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// vert shader
 	unsigned int vertexShader;
@@ -134,7 +142,7 @@ int main() {
 	// print msg
 	std::println("To switch between polygon modes press either:");
 	std::println("Numpad 0: Wireframe Mode.");
-	std::println("Numoad 1: Fill Mode.");
+	std::println("Numpad 1: Fill Mode.");
 
 	// Render loop
 	while (!glfwWindowShouldClose(window)) {
