@@ -1,0 +1,2 @@
+add_executable(Hello_Triangle main.cpp)
+target_link_libraries(Hello_Triangle PRIVATE GLCore)
