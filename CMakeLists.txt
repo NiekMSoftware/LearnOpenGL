@@ -7,4 +7,4 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(GLCore)
 
 # LearnOpenGL - Learning Sources
-add_subdirectory(LearnOpenGL/creating_a_window)
+add_subdirectory(LearnOpenGL)
