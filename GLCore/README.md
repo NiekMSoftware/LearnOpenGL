@@ -45,6 +45,8 @@ A minimal app using `GLCore::App`:
 #include <GLCore/App.h>
 
 class MyApp : public GLCore::App {
+public:
+    using GLCore::App::App; // inherit constructors; enables MyApp(props)
 protected:
     void OnInit() override {
         // Load resources, initialize state, set GL state
@@ -58,14 +60,14 @@ protected:
     void OnRender() override {
         // Issue GL draws. glad is included via App.h, so you can call GL directly.
         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // The framework clears before OnRender; set state and draw here.
     }
 };
 
 int main() {
-    constexpr GLCore::AppProperties props{"My App", 1280, 720};
-    auto app = std::make_unique<MyApp>(props);
-    app->Run();
+    const GLCore::AppProperties props{"My App", 1280, 720};
+    MyApp app(props);
+    app.Run();
 }
 ```
 
@@ -133,20 +135,29 @@ Key members:
 Within `App::Run()` the internal loop performs roughly:
 1. Process input (ESC to close)
 2. `OnUpdate()`
-3. `OnRender()`
-4. Clear and present frame:
-   - `glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)`
+3. Clear for the next frame: `glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)`
+4. `OnRender()`
+5. Present and pump events:
    - `SwapBuffers()`
    - `Window::PollEvents()`
 
-You can additionally clear in `OnRender()` if desired; the library performs a default clear after your render to guarantee a presentable frame.
+Note: The library clears the frame buffer before your `OnRender()` callback. You usually do not need to call `glClear` yourself unless you want a different clear state within the same frame.
 
 ---
 
-## Requirements
-- Windows 10/11 x64
-- OpenGL 3.3+ capable GPU/driver
-- Built with MSVC via CMake (see root `README.md` for detailed build steps)
+## Build (inside this repo)
+- Prerequisites: Windows 10/11 x64, CMake 3.24+, Visual Studio 2022 (MSVC), a GPU/driver supporting OpenGL 3.3+
+- Steps:
+  1. Configure from the repository root:
+     - GUI: Open the folder in CLion/VS, let it configure CMake.
+     - CLI (PowerShell):
+       ```powershell
+       cmake -S . -B .\cmake-build-debug -G "Visual Studio 17 2022" -A x64
+       cmake --build .\cmake-build-debug --config Debug
+       ```
+  2. Run any example target (e.g., `creating_a_window`, `hello_triangle`). They already link against `GLCore`.
+
+`GLCore` is added by the top-level `CMakeLists.txt`; examples link it transitively to `glfw`, `glad`, and `glm`.
 
 ---
 
@@ -166,4 +177,4 @@ This library is part of the project in the repository root. See the root `README
 ---
 
 ## Status
-Last updated: 2025-11-04 11:06 (local).
+Last updated: 2025-11-04 12:46 (local).

@@ -8,10 +8,7 @@ using namespace GLCore;
 
 class TriangleApp final : public App {
 public:
-    TriangleApp() = default;
-
-    explicit TriangleApp(const AppProperties &properties)
-        : App(properties), VBO(0), VAO(0), vertexShader(0), fragmentShader(0), shaderProgram(0) { }
+    using App::App;
 
 protected:
     void OnInit() override {
@@ -107,10 +104,7 @@ private:
 
 class RectangleApp final : public App {
 public:
-    RectangleApp() = default;
-
-    explicit RectangleApp(const AppProperties &properties)
-        : App(properties), VBO(0), VAO(0), EBO(0), shaderProgram(0), vertexShader(0), fragmentShader(0) {}
+    using App::App;
 
 protected:
     void OnInit() override {
@@ -221,11 +215,7 @@ private:
 
 class ExerciseApp final : public App {
 public:
-    ExerciseApp() = default;
-
-    explicit ExerciseApp(const AppProperties &properties)
-        : App(properties), VBO{}, VAO{}, vertexShader(0), orangeFragmentShader(0), yellowFragmentShader(0),
-          orangeShaderProgram(0), yellowShaderProgram(0) {}
+    using App::App;
 
 void OnInit() override {
         // Generate buffers
