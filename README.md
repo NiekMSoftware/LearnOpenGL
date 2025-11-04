@@ -10,7 +10,7 @@ If you are following the LearnOpenGL journey, use `GLCore` to keep samples small
 
 ## Repository Layout
 ```
-E:/LearnOpenGL/
+LearnOpenGL/
 ├─ CMakeLists.txt            # Top-level CMake project (adds GLCore and examples)
 ├─ GLCore/                   # Reusable mini framework (GLFW, glad, GLM bundled)
 │  ├─ include/GLCore/        # Public headers (App.h, Window.h)
@@ -22,7 +22,7 @@ E:/LearnOpenGL/
 └─ .gitignore
 ```
 
-See `GLCore/README.md` for the detailed API and extension notes.
+See [GLCore/README.md](GLCore/README.md) for the detailed API and extension notes.
 
 ---
 
@@ -33,7 +33,7 @@ See `GLCore/README.md` for the detailed API and extension notes.
 - MSVC (Visual Studio 2022) or CLion with Visual Studio toolchain
 - GPU/driver supporting OpenGL 3.3+
 
-All third-party libraries are bundled under `GLCore/lib` and built from source; no external package manager is required.
+All third-party libraries are bundled under [GLCore/lib](GLCore/lib) and built from source; no external package manager is required.
 
 ---
 
@@ -78,18 +78,11 @@ target_compile_features(my_example PRIVATE cxx_std_20)
 
 ---
 
-## Current Examples
-- `LearnOpenGL/creating_a_window`: Minimal window + OpenGL context. The default app handles ESC to close. Rendering is cleared each frame to ensure a presentable buffer.
-
-Expected output: an empty window; no console errors. If you see an error related to GL loader or context, check Troubleshooting below.
-
----
-
 ## Troubleshooting
-- CMake generator not found: ensure Visual Studio 2022 with C++ Desktop workload is installed. Re-run from a VS Developer Prompt.
+- CMake generator isn't found: ensure Visual Studio 2022 with C++ Desktop workload is installed. Re-run from a VS Developer Prompt.
 - Linker errors for OpenGL: the project uses GLFW + glad; make sure you are building x64 and the generator matches `-A x64`.
 - Black window / GL errors: verify your GPU drivers support OpenGL 3.3+ and update drivers if needed.
-- CLion cannot find toolchain: configure a Visual Studio toolchain (File → Settings → Build, Execution, Deployment → Toolchains) and ensure CMake uses it.
+- CLion cannot find a toolchain: configure a Visual Studio toolchain (File → Settings → Build, Execution, Deployment → Toolchains) and ensure CMake uses it.
 
 ---
 
@@ -100,14 +93,14 @@ Bundled sources under `GLCore/lib` include:
 - GLM (math)
 - ImGui, stb, JSON (present; not all are currently wired into builds)
 
-Each component retains its own license in its repository; consult their upstreams if redistributing. Within this workspace they are used as source dependencies.
+Each component retains its own license in its repository; consult their upstreaming if redistributing. Within this workspace they are used as source dependencies.
 
 ---
 
 ## License
-This workspace is for learning and experimentation. If you plan to distribute binaries or the `GLCore` library independently, review and include licenses for GLFW, glad, and GLM (and any other libraries you enable).
+This workspace is for learning and experimentation. If you plan to distribute binaries or the [GLCore](GLCore) library independently, review and include licenses for GLFW, glad, and GLM (and any other libraries you enable).
 
 ---
 
 ## Status
-Last updated: 2025-11-04 11:13 (local).
+Last updated: 2025-11-04 12:54 (local).
