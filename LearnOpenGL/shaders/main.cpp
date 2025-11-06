@@ -46,8 +46,12 @@ protected:
         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
         shader->Bind();
-        constexpr float offset = 0.5f;
-        shader->SetFloat("xOffset", offset);
+        /*
+        Answer to the question: Do you know why the bottom-left side is black?
+        ---------------------------------------------------------------------
+        The output of the fragment color is equal to the coordinate of the triangle.
+        The bottom left is (-0.5f, -0.5f, 0.0f). Since the xy components are negative, they are clamped to 0.0f.
+        */
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
