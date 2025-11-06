@@ -8,7 +8,7 @@
 # - DESTINATION: Optional destination directory. Defaults to "$<TARGET_FILE_DIR:<TARGET_NAME>>/assets".
 #
 # Notes:
-# - Adds a POST_BUILD step so assets are available for run/debug.
+# - Adds a per-target custom dependency that runs on every build of the target, ensuring assets are copied whenever you build the application.
 # - For MSVC, sets VS_DEBUGGER_WORKING_DIRECTORY to the target's output directory for better F5 experience.
 #
 function(copy_assets TARGET_NAME ASSETS_DIR)
@@ -32,12 +32,24 @@ function(copy_assets TARGET_NAME ASSETS_DIR)
         set(_dest "$<TARGET_FILE_DIR:${TARGET_NAME}>/assets")
     endif()
 
-    # Ensure destination is recreated and copy contents
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+    # Create a stamp-based custom command that re-runs when any asset changes
+    # Enumerate asset files (tracks additions/removals with CONFIGURE_DEPENDS)
+    file(GLOB_RECURSE _asset_files CONFIGURE_DEPENDS "${ASSETS_DIR}/*")
+    set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/copy_assets_${TARGET_NAME}.stamp")
+
+    add_custom_command(OUTPUT "${_stamp}"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "${_dest}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${_dest}"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${_dest}"
-        COMMENT "Copying assets for ${TARGET_NAME}: '${ASSETS_DIR}' -> '${_dest}'")
+        COMMAND ${CMAKE_COMMAND} -E touch "${_stamp}"
+        DEPENDS ${_asset_files}
+        COMMENT "Copying assets for ${TARGET_NAME}: '${ASSETS_DIR}' -> '${_dest}'"
+        VERBATIM)
+
+    # Create a custom target that depends on the stamp, and make the app depend on it
+    set(_copy_target "copy_assets_${TARGET_NAME}")
+    add_custom_target(${_copy_target} DEPENDS "${_stamp}")
+    add_dependencies(${TARGET_NAME} ${_copy_target})
 
     # Improve Visual Studio debugging experience
     if (MSVC)
