@@ -46,6 +46,8 @@ protected:
         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
         shader->Bind();
+        constexpr float offset = 0.5f;
+        shader->SetFloat("xOffset", offset);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
