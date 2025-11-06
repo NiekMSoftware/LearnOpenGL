@@ -5,10 +5,11 @@
 ---
 
 ## Key Features
-- C++20, header-only API surface with Pimpl-backed implementation
+- C++20, minimal API surface with Pimpl-backed implementation
 - RAII-managed window and GL context
 - Built-in main loop with overridable lifecycle hooks
-- vendored deps: GLFW, glad, GLM (available transitively)
+- Small `Shader` helper for compiling/linking GLSL programs and setting common uniforms
+- Vendored deps: GLFW, glad, GLM (available transitively)
 
 ---
 
@@ -16,12 +17,14 @@
 ```
 GLCore/
 ├─ include/GLCore/
-│  ├─ App.h     # Abstract app API (OnInit/OnUpdate/OnRender/OnShutdown)
-│  └─ Window.h  # RAII wrapper around GLFWwindow
+│  ├─ App.h      # Abstract app API (OnInit/OnUpdate/OnRender/OnShutdown)
+│  ├─ Window.h   # RAII wrapper around GLFWwindow
+│  └─ Shader.h   # Tiny GLSL program helper (compile/link/bind/set uniforms)
 ├─ src/
 │  ├─ App.cpp
-│  └─ Window.cpp
-└─ lib/         # vendored third‑party source (glfw, glad, glm, imgui, stb, json)
+│  ├─ Window.cpp
+│  └─ Shader.cpp
+└─ lib/          # vendored third‑party source (glfw, glad, glm, imgui, stb, json)
 ```
 
 ---
@@ -131,6 +134,44 @@ Key members:
 
 ---
 
+### Class: `Shader`
+Header: `include/GLCore/Shader.h`
+
+Purpose: Tiny helper to compile/link a GLSL program from vertex/fragment sources and set common uniforms.
+
+Key members:
+- Constructor: `explicit Shader(const char* vertexPath, const char* fragmentPath)`
+- Destructor: deletes the GL program
+- Non-copyable; move semantics defaulted
+- Binding: `void Bind() const`, `static void Unbind()`
+- Program id: `unsigned int ID() const`
+- Uniform helpers: `SetBool(name, bool)`, `SetInt(name, int)`, `SetFloat(name, float)`, `SetMat4(name, const glm::mat4&)`
+
+Notes:
+- Expects valid, readable files at the provided paths. See the example target that copies `assets/` next to the executable using `copy_assets()`.
+- `Shader.h` includes GLM; `SetMat4` uses `glm::value_ptr` internally.
+
+---
+
+## Shader helper — quick usage
+```cpp
+#include <GLCore/App.h>
+#include <GLCore/Shader.h>
+
+class TriangleApp : public GLCore::App {
+    using GLCore::App::App;
+    void OnInit() override {
+        // create VAO/VBO (not shown) and compile shaders from files near the exe
+        shader = std::make_unique<GLCore::Shader>("assets/vert.glsl", "assets/frag.glsl");
+    }
+    void OnRender() override {
+        shader->Bind();
+        // issue draw calls...
+    }
+    std::unique_ptr<GLCore::Shader> shader;
+};
+```
+
 ## Rendering and Loop Order
 Within `App::Run()` the internal loop performs roughly:
 1. Process input (ESC to close)
@@ -155,7 +196,7 @@ Note: The library clears the frame buffer before your `OnRender()` callback. You
        cmake -S . -B .\cmake-build-debug -G "Visual Studio 17 2022" -A x64
        cmake --build .\cmake-build-debug --config Debug
        ```
-  2. Run any example target (e.g., `creating_a_window`, `hello_triangle`). They already link against `GLCore`.
+  2. Run any example target (e.g., `creating_a_window`, `hello_triangle`, `Shaders`). They already link against `GLCore`.
 
 `GLCore` is added by the top-level `CMakeLists.txt`; examples link it transitively to `glfw`, `glad`, and `glm`.
 
@@ -177,4 +218,4 @@ This library is part of the project in the repository root. See the root `README
 ---
 
 ## Status
-Last updated: 2025-11-04 12:46 (local).
+Last updated: 2025-11-06 13:10 (local).

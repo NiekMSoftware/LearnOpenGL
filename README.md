@@ -13,16 +13,21 @@ If you are following the LearnOpenGL journey, use `GLCore` to keep samples small
 LearnOpenGL/
 ├─ CMakeLists.txt            # Top-level CMake project (adds GLCore and examples)
 ├─ GLCore/                   # Reusable mini framework (GLFW, glad, GLM bundled)
-│  ├─ include/GLCore/        # Public headers (App.h, Window.h)
+│  ├─ include/GLCore/        # Public headers (App.h, Window.h, Shader.h)
 │  ├─ src/                   # Implementation
 │  ├─ lib/                   # Vendored third-party sources (glfw, glad, glm, imgui, stb, json)
 │  └─ CMakeLists.txt
 ├─ LearnOpenGL/
-│  └─ creating_a_window/     # First example executable
+│  ├─ creating_a_window/     # Minimal window & loop example
+│  └─ shaders/               # First shader/VAO/VBO example (copies GLSL assets next to the binary)
 └─ .gitignore
 ```
 
 See [GLCore/README.md](GLCore/README.md) for the detailed API and extension notes.
+
+### Examples
+- creating_a_window: opens a window and clears the screen using the `GLCore::App` loop.
+- shaders: renders a single colored triangle using a small `GLCore::Shader` helper and vertex attributes. Assets (`assets/vert.glsl`, `assets/frag.glsl`) are copied near the executable by CMake (see `cmake/CopyAssets.cmake`).
 
 ---
 
@@ -62,8 +67,10 @@ cmake --build build --config Release
 ## Build and Run (CLion)
 1. Open the repository root in CLion.
 2. Let CLion generate a CMake profile (e.g., `Debug` with VS toolchain).
-3. Select the `creating_a_window` run configuration.
-4. Build and Run. A window titled "LearnOpenGL" (or as configured) should appear; press ESC to close.
+3. Select a run configuration:
+   - `creating_a_window` to see a basic window and clear color.
+   - `Shaders` to render a single triangle from GLSL shaders. Its `assets/` are auto‑copied next to the binary via `cmake/CopyAssets.cmake`.
+4. Build and Run. A window should appear; press ESC to close.
 
 ---
 
@@ -74,7 +81,7 @@ add_executable(my_example main.cpp)
 target_link_libraries(my_example PRIVATE GLCore)
 target_compile_features(my_example PRIVATE cxx_std_20)
 ```
-`GLCore` exposes public includes and transitively links GLFW, glad, and GLM. In your `main.cpp`, derive from `GLCore::App` and implement the lifecycle methods; see `GLCore/README.md` for a quick-start snippet.
+`GLCore` exposes public includes and transitively links GLFW, glad, and GLM. In your `main.cpp`, derive from `GLCore::App` and implement the lifecycle methods; see `GLCore/README.md` for a quick-start snippet. For shader‑based examples, also see `GLCore::Shader` and how the `LearnOpenGL/shaders` example copies `assets/` alongside the executable using `copy_assets()`.
 
 ---
 
@@ -103,4 +110,4 @@ This workspace is for learning and experimentation. If you plan to distribute bi
 ---
 
 ## Status
-Last updated: 2025-11-04 12:54 (local).
+Last updated: 2025-11-06 13:10 (local).
