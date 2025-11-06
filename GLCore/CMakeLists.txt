@@ -7,9 +7,11 @@ add_subdirectory(lib/glm)
 add_library(GLCore
         src/App.cpp
         src/Window.cpp
+        src/Shader.cpp
 
         include/GLCore/App.h
         include/GLCore/Window.h
+        include/GLCore/Shader.h
 )
 
 target_include_directories(GLCore PUBLIC include)
